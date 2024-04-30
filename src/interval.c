@@ -1,7 +1,7 @@
 /*
- * Libitree: an interval tree library in C 
+ * Libitree: an interval tree library in C
  *
- * Copyright (C) 2018 Alessandro Vullo 
+ * Copyright (C) 2018 Alessandro Vullo
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
-*/
+ */
 
 #include "interval.h"
 
@@ -35,44 +35,47 @@ using std::size_t;
 #include <stdio.h>
 #endif
 
-interval_t *interval_new ( float low, float high, void *data, dup_f dup, rel_f rel ) {
+interval_t *interval_new(float low, float high, void *data, dup_f dup, rel_f rel)
+{
+	interval_t *ri = (interval_t *)malloc(sizeof *ri);
 
-  interval_t *ri = (interval_t*) malloc ( sizeof *ri );
+	if (ri == NULL)
+		return NULL;
 
-  if ( ri == NULL )
-    return NULL;
+	ri->low = low;
+	ri->high = high;
+	ri->dup = dup;
+	ri->rel = rel;
+	ri->data = ri->dup(data);
 
-  ri->low = low;
-  ri->high = high;
-  ri->dup = dup;
-  ri->rel = rel;
-  ri->data = ri->dup( data );
-  
-  return ri;
+	return ri;
 }
 
-interval_t *interval_copy ( const interval_t *i ) {
-  return interval_new ( i->low, i->high, i->data, i->dup, i->rel );
+interval_t *interval_copy(const interval_t *i)
+{
+	return interval_new(i->low, i->high, i->data, i->dup, i->rel);
 }
 
-void interval_delete ( interval_t *i ) {
-  if ( i != NULL ) {    
-    if ( i->data )
-      i->rel ( i->data );
-    free ( i );
-  }
+void interval_delete(interval_t *i)
+{
+	if (i == NULL)
+		return;
 
+	if (i->data)
+		i->rel(i->data);
+
+	free(i);
 }
 
-int interval_overlap(const interval_t* i1, const interval_t* i2) {
-  return i1->low <= i2->high && i2->low <= i1->high;
+int interval_overlap(const interval_t *i1, const interval_t *i2)
+{
+	return i1->low <= i2->high && i2->low <= i1->high;
 }
 
-int interval_fallin ( const interval_t* i1, const interval_t* i2){
-  return i2->low <= i1->low && i1->high <= i2->high;
+int interval_fallin(const interval_t *i1, const interval_t *i2)
+{
+	return i2->low <= i1->low && i1->high <= i2->high;
 }
-	
-
 
 /*
  * WARNING
@@ -82,6 +85,7 @@ int interval_fallin ( const interval_t* i1, const interval_t* i2){
  *
  * This is critical and needs to be revised.
  */
-int interval_equal(const interval_t* i1, const interval_t* i2) {
-  return i1->low == i2->low && i1->high == i2->high;
+int interval_equal(const interval_t *i1, const interval_t *i2)
+{
+	return i1->low == i2->low && i1->high == i2->high;
 }

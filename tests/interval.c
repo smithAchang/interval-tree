@@ -1,7 +1,7 @@
 /*
- * Libitree: an interval tree library in C 
+ * Libitree: an interval tree library in C
  *
- * Copyright (C) 2018 Alessandro Vullo 
+ * Copyright (C) 2018 Alessandro Vullo
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,111 +20,109 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
-*/
+ */
 
 #include <check.h>
 #include <stdlib.h>
 #include "interval.h"
 
 /* clone an integer */
-void* clone_data ( void *p ) {
-  int* c = (int*) malloc ( sizeof(int) );
-  *c = *(int*)p;
-  
-  return c;
+void *clone_data(void *p)
+{
+	int *c = (int *)malloc(sizeof(int));
+
+	*c = *(int *)p;
+
+	return c;
 }
 
 /* destroy an integer */
-void destroy_data ( void *p ) {
-  free(p);
-}
-
-int get_data ( void *p ) {
-  return *(int*)p;
-}
-
-START_TEST(interval_creation)
+void destroy_data(void *p)
 {
-  int dummy = 10;
-  interval_t *i = interval_new ( 10, 20, &dummy, clone_data, destroy_data );
-  
-  ck_assert ( i );
-  ck_assert_int_eq ( i->low, 10 );
-  ck_assert_int_eq ( i->high, 20 );
-  ck_assert_int_eq ( get_data ( i->data ), 10 );
-  
-  interval_delete( i );
-  
+	free(p);
 }
-END_TEST
 
-START_TEST(interval_duplication)
+int get_data(void *p)
 {
-  int dummy = 10;
-  interval_t *i = interval_new ( 10, 20, &dummy, clone_data, destroy_data );
-  interval_t *icopy = interval_copy ( i );
-  
-  ck_assert ( icopy );
-  ck_assert_ptr_ne ( i, icopy );
-  ck_assert_ptr_ne ( i->data, icopy->data );
-  ck_assert_int_eq ( icopy->low, 10 );
-  ck_assert_int_eq ( icopy->high, 20 );
-  ck_assert_int_eq ( get_data ( icopy->data ), 10 );
-    
-  interval_delete( i );
-  interval_delete( icopy );
-  
+	return *(int *)p;
 }
-END_TEST
 
-START_TEST(interval_comparison)
+START_TEST(interval_creation){
+	int dummy = 10;
+	interval_t *i = interval_new(10, 20, &dummy, clone_data, destroy_data);
+
+	ck_assert(i);
+	ck_assert_int_eq(i->low, 10);
+	ck_assert_int_eq(i->high, 20);
+	ck_assert_int_eq(get_data(i->data), 10);
+
+	interval_delete(i);
+}
+
+END_TEST START_TEST(interval_duplication)
 {
-  int dummy = 10;
-  interval_t *i1 = interval_new ( 10.0, 20.0, &dummy, clone_data, destroy_data ),
-    *i2 = interval_new ( 5.0, 15.0, &dummy, clone_data, destroy_data ),
-    *i3 = interval_new ( 16.0, 25.0, &dummy, clone_data, destroy_data );
+	int dummy = 10;
+	interval_t *i = interval_new(10, 20, &dummy, clone_data, destroy_data);
+	interval_t *icopy = interval_copy(i);
 
-  ck_assert(interval_overlap(i1, i2));
-  ck_assert(interval_overlap(i1, i3));
-  ck_assert(!interval_overlap(i2, i3));
+	ck_assert(icopy);
+	ck_assert_ptr_ne(i, icopy);
+	ck_assert_ptr_ne(i->data, icopy->data);
+	ck_assert_int_eq(icopy->low, 10);
+	ck_assert_int_eq(icopy->high, 20);
+	ck_assert_int_eq(get_data(icopy->data), 10);
 
-  interval_delete( i1 );
-  interval_delete( i2 );
-  interval_delete( i3 );
-  
-}
-END_TEST
-
-
-static Suite *interval_suite(void) {
-    Suite *s;
-    TCase *tc_core, *tc_iops;
-
-    s = suite_create("Interval");
-
-    tc_core = tcase_create("Core"); /* Core test case */
-    tc_iops = tcase_create("Operations");
-    
-    tcase_add_test(tc_core, interval_creation);
-    tcase_add_test(tc_core, interval_duplication);
-    tcase_add_test(tc_iops, interval_comparison);
-    
-    suite_add_tcase(s, tc_core);
-    suite_add_tcase(s, tc_iops);
-    
-    return s;
+	interval_delete(i);
+	interval_delete(icopy);
 }
 
-int main(void) {
-    int number_failed;
-    Suite *s;
-    SRunner *sr;
+END_TEST START_TEST(interval_comparison)
+{
+	int dummy = 10;
+	interval_t *i1 = interval_new(10.0, 20.0, &dummy, clone_data, destroy_data),
+			   *i2 = interval_new(5.0, 15.0, &dummy, clone_data, destroy_data),
+			   *i3 = interval_new(16.0, 25.0, &dummy, clone_data, destroy_data);
 
-    s = interval_suite();
-    sr = srunner_create(s);
+	ck_assert(interval_overlap(i1, i2));
+	ck_assert(interval_overlap(i1, i3));
+	ck_assert(!interval_overlap(i2, i3));
 
-    srunner_run_all(sr, CK_NORMAL);
-    number_failed = srunner_ntests_failed(sr);
-    srunner_free(sr);
-    return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
+	interval_delete(i1);
+	interval_delete(i2);
+	interval_delete(i3);
+}
+
+END_TEST static Suite *interval_suite(void)
+{
+	Suite *s;
+	TCase *tc_core, *tc_iops;
+
+	s = suite_create("Interval");
+
+	tc_core = tcase_create("Core");         /* Core test case */
+	tc_iops = tcase_create("Operations");
+
+	tcase_add_test(tc_core, interval_creation);
+	tcase_add_test(tc_core, interval_duplication);
+	tcase_add_test(tc_iops, interval_comparison);
+
+	suite_add_tcase(s, tc_core);
+	suite_add_tcase(s, tc_iops);
+
+	return s;
+}
+
+int main(void)
+{
+	int number_failed;
+	Suite *s;
+	SRunner *sr;
+
+	s = interval_suite();
+	sr = srunner_create(s);
+
+	srunner_run_all(sr, CK_NORMAL);
+	number_failed = srunner_ntests_failed(sr);
+	srunner_free(sr);
+	return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

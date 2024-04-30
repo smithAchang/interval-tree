@@ -1,7 +1,7 @@
 /*
- * Libitree: an interval tree library in C 
+ * Libitree: an interval tree library in C
  *
- * Copyright (C) 2018 Alessandro Vullo 
+ * Copyright (C) 2018 Alessandro Vullo
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
-*/
+ */
 
 #include "interval_list.h"
 
@@ -39,225 +39,226 @@ using std::size_t;
 #define HEIGHT_LIMIT 64
 #endif
 
-/* Note: doesn't own the interval, comes from the tree 
-   which is responsible for deallocating the interval. */
+/* Note: doesn't own the interval, comes from the tree
+ *  which is responsible for deallocating the interval. */
 typedef struct ilistnode {
-
-  const interval_t* interval;
-  struct ilistnode *next;
-
+	const interval_t *	interval;
+	struct ilistnode *	next;
 } ilistnode_t;
-  
+
 struct ilist {
-
-  ilistnode_t *head, *tail; /* Dummy nodes */
-  size_t      size;
-
+	ilistnode_t *	head, *tail;         /* Dummy nodes */
+	size_t			size;
 };
 
 struct ilisttrav {
-
-  ilist_t     *list;               /* Paired list */
-  ilistnode_t *it;                 /* Current node */
-
+	ilist_t *		list;           /* Paired list */
+	ilistnode_t *	it;             /* Current node */
 };
 
-static ilistnode_t *ilistnode_new( const interval_t *i, ilistnode_t *next ) {
+static ilistnode_t *ilistnode_new(const interval_t *i, ilistnode_t *next)
+{
+	ilistnode_t *node = (ilistnode_t *)malloc(sizeof *node);
 
-  ilistnode_t *node = (ilistnode_t*) malloc ( sizeof *node );
+	if (node != NULL) {
+		node->interval = i;                 /* NOTE: doesn't own the interval, pointer aliasing */
+		node->next = next;
+	}
 
-  if (node != NULL ) {
-    node->interval = i; /* NOTE: doesn't own the interval, pointer aliasing */
-    node->next = next;
-  }
-
-  return node;
+	return node;
 }
 
-/* 
-   Destroy a single node, assuming it's been unlinked.
-   Returns the next node specified by the link.
-*/
+/*
+ * Destroy a single node, assuming it's been unlinked.
+ * Returns the next node specified by the link.
+ */
+ilistnode_t *ilistnode_delete(ilistnode_t *node)
+{
+	ilistnode_t *next = NULL;
 
-ilistnode_t *ilistnode_delete(ilistnode_t* node) {
-  ilistnode_t *next = NULL;
+	if (node != NULL) {
+		/* Save a reference to the next node
+		 * since we're about to destroy this one */
+		next = node->next;
 
-  if ( node != NULL ) {
-    /* Save a reference to the next node 
-       since we're about to destroy this one */
-    next = node->next;
+		free(node);
+	}
 
-    free ( node );
-  }
-
-  return next;
+	return next;
 }
 
-ilist_t *ilist_new() {
-  ilist_t *list = (ilist_t*) malloc ( sizeof *list);
+ilist_t *ilist_new()
+{
+	ilist_t *list = (ilist_t *)malloc(sizeof *list);
 
-  if ( list != NULL ) {
-    ilistnode_t *tail = ilistnode_new(NULL, NULL);
+	if (list != NULL) {
+		ilistnode_t *tail = ilistnode_new(NULL, NULL);
 
-    if ( tail == NULL ) {
-      free( list );
-      list = NULL;
-    } else {
-      list->tail = tail;
-      list->head = ilistnode_new(NULL, list->tail);
-      
-      if ( list->head == NULL) {
-	free ( list );
-	list = NULL;
-      }
+		if (tail == NULL) {
+			free(list);
+			list = NULL;
+		}
+		else {
+			list->tail = tail;
+			list->head = ilistnode_new(NULL, list->tail);
 
-      list->size = 0;
+			if (list->head == NULL) {
+				free(list);
+				list = NULL;
+			}
 
-    }
-    
-  }
+			list->size = 0;
+		}
+	}
 
-  return list;
+	return list;
 }
 
-void ilist_delete(ilist_t *list) {
-  if ( list == NULL )
-    return;
+void ilist_delete(ilist_t *list)
+{
+	if (list == NULL)
+		return;
 
-  ilistnode_t *it = list->head;
+	ilistnode_t *it = list->head;
 
-  while ( it != list->tail ) {
-    it = ilistnode_delete( it );
-  }
+	while (it != list->tail)
+		it = ilistnode_delete(it);
 
-  ilistnode_delete( it ); /* Delete tail */
+	ilistnode_delete(it);           /* Delete tail */
 
-  free ( list );
+	free(list);
 }
 
-size_t ilist_size(const ilist_t *list) {
-  return list->size;
+size_t ilist_size(const ilist_t *list)
+{
+	return list->size;
 }
 
-static ilistnode_t *insert_before(ilist_t*, ilistnode_t*, const interval_t*);
+static ilistnode_t *insert_before(ilist_t *, ilistnode_t *, const interval_t *);
 
-static ilistnode_t *insert_after(ilist_t *list, ilistnode_t *pos, const interval_t *i) {
-  ilistnode_t *node = NULL;
+static ilistnode_t *insert_after(ilist_t *list, ilistnode_t *pos, const interval_t *i)
+{
+	ilistnode_t *node = NULL;
 
-  if ( list != NULL && pos != NULL ) {
+	if (list != NULL && pos != NULL) {
+		if (pos != list->tail) {
+			node = ilistnode_new(i, pos->next);
 
-    if ( pos != list->tail ) {
+			if (node != NULL) {
+				pos->next = node;
+				++list->size;
+			}
+		}
+		else {
+			node = insert_before(list, pos, i);
+		}
+	}
 
-      node = ilistnode_new( i, pos->next );
-
-      if ( node != NULL ) {
-	pos->next = node;
-	++list->size;
-      }
-      
-    } else
-      node = insert_before ( list, pos, i );
-  }
-
-  return node;
+	return node;
 }
 
-static ilistnode_t *insert_before(ilist_t *list, ilistnode_t *pos, const interval_t *i) {
+static ilistnode_t *insert_before(ilist_t *list, ilistnode_t *pos, const interval_t *i)
+{
+	if (list == NULL || pos == NULL)
+		return NULL;
 
-  ilistnode_t *node = NULL;
+	ilistnode_t *node = NULL;
 
-  if ( list != NULL && pos != NULL ) {
-    
-    if ( pos != list->head ) {
-      /* Find the previous node */
-      ilistnode_t * it = list->head;
+	if (pos != list->head) {
+		/* Find the previous node */
+		ilistnode_t *it = list->head;
 
-      while ( it->next != pos )
-	it = it->next;
+		while (it->next != pos)
+			it = it->next;
 
-      /* Create a new node and set the new link */
-      node = ilistnode_new( i, it->next );
+		/* Create a new node and set the new link */
+		node = ilistnode_new(i, it->next);
 
-      if ( node != NULL ) {
-	it->next = node;
-	++list->size;
-      }
-      
-    } else
-      node = insert_after( list, pos, i );
-    
-  }
+		if (node != NULL) {
+			it->next = node;
+			++list->size;
+		}
+	}
+	else {
+		node = insert_after(list, pos, i);
+	}
 
-  return node;
+	return node;
 }
 
-int ilist_append(ilist_t *list, const interval_t *i) {
+int ilist_append(ilist_t *list, const interval_t *i)
+{
+	ilistnode_t *node = insert_before(list, list->tail, i);
 
-  ilistnode_t *node = insert_before ( list, list->tail, i);
-  
-  if ( node != NULL )
-    return 1;
+	if (node != NULL)
+		return 1;
 
-  return 0;
+	return 0;
 }
 
-ilisttrav_t *ilisttrav_new( ilist_t *list ) {
-  if ( list == NULL )
-    return NULL;
-  
-  ilisttrav_t *trav = (ilisttrav_t*) malloc ( sizeof ( ilisttrav_t ) );
+ilisttrav_t *ilisttrav_new(ilist_t *list)
+{
+	if (list == NULL)
+		return NULL;
 
-  if ( trav != NULL )
-    trav->list = list;
-  
-  return trav;
+	ilisttrav_t *trav = (ilisttrav_t *)malloc(sizeof(ilisttrav_t));
+
+	if (trav != NULL)
+		trav->list = list;
+
+	return trav;
 }
 
-void ilisttrav_delete ( ilisttrav_t *trav ) {
-  free ( trav );
+void ilisttrav_delete(ilisttrav_t *trav)
+{
+	free(trav);
 }
 
-const interval_t *ilisttrav_first ( ilisttrav_t *trav ) {
-  if ( trav->list == NULL )
-    return NULL;
-  
-  trav->it = trav->list->head->next;
+const interval_t *ilisttrav_first(ilisttrav_t *trav)
+{
+	if (trav->list == NULL)
+		return NULL;
 
-  return trav->it == NULL || trav->it == trav->list->tail ? NULL : trav->it->interval;
+	trav->it = trav->list->head->next;
+
+	return trav->it == NULL || trav->it == trav->list->tail ? NULL : trav->it->interval;
 }
 
-const interval_t  *ilisttrav_last ( ilisttrav_t *trav ) {
-  if ( trav->list == NULL )
-    return NULL;
-  
-  trav->it = trav->list->head;
+const interval_t *ilisttrav_last(ilisttrav_t *trav)
+{
+	if (trav->list == NULL)
+		return NULL;
 
-  while ( trav->it->next != trav->list->tail )
-    trav->it = trav->it->next;
-  
-  return trav->it == trav->list->head || trav->it == NULL ? NULL : trav->it->interval;
+	trav->it = trav->list->head;
+
+	while (trav->it->next != trav->list->tail)
+		trav->it = trav->it->next;
+
+	return trav->it == trav->list->head || trav->it == NULL ? NULL : trav->it->interval;
 }
 
-const interval_t  *ilisttrav_next ( ilisttrav_t *trav ) {
-  if ( trav == NULL)
-    return NULL;
-  
-  trav->it = trav->it->next;
+const interval_t *ilisttrav_next(ilisttrav_t *trav)
+{
+	if (trav == NULL)
+		return NULL;
 
-  return trav->it == NULL || trav->it == trav->list->tail ? NULL : trav->it->interval;
+	trav->it = trav->it->next;
+
+	return trav->it == NULL || trav->it == trav->list->tail ? NULL : trav->it->interval;
 }
 
 /* Very inefficient, need a doubly linked list to properly support this */
-const interval_t  *ilisttrav_prev ( ilisttrav_t *trav ) {
-  if ( trav == NULL )
-    return NULL;
+const interval_t *ilisttrav_prev(ilisttrav_t *trav)
+{
+	if (trav == NULL)
+		return NULL;
 
-  ilistnode_t *it = trav->list->head;
+	ilistnode_t *it = trav->list->head;
 
-  while ( it->next != trav->it )
-    it = it->next;
+	while (it->next != trav->it)
+		it = it->next;
 
-  trav->it = it;
-  
-  return trav->it == trav->list->head || trav->it == NULL ? NULL : trav->it->interval;
+	trav->it = it;
+
+	return trav->it == trav->list->head || trav->it == NULL ? NULL : trav->it->interval;
 }

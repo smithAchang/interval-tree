@@ -1,7 +1,7 @@
 /*
- * Libitree: an interval tree library in C 
+ * Libitree: an interval tree library in C
  *
- * Copyright (C) 2018 Alessandro Vullo 
+ * Copyright (C) 2018 Alessandro Vullo
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
-*/
+ */
 
 #ifndef _UTILS_H_
 #define _UTILS_H_
@@ -41,17 +41,19 @@ extern "C" {
 
 #define BIGRND 0x7fffffff
 
-typedef unsigned int uint;
+	typedef unsigned int uint;
 
 /* Generate a random number between 0.0 and 1.0 */
-double rnd01() {
-  return ((double) random() / (double) BIGRND);
-}
+	double rnd01()
+	{
+		return (double)random() / (double)BIGRND;
+	}
 
 /* Generate a random number between -1.0 and +1.0 */
-double nrnd01() {
-  return ((rnd01() * 2.0) - 1.0);
-}
+	double nrnd01()
+	{
+		return (rnd01() * 2.0) - 1.0;
+	}
 
 /*
  * From http://floating-point-gui.de, Michael Borgwardt
@@ -74,4 +76,4 @@ double nrnd01() {
 /*     return diff / fmin( (abs_a + abs_b), FLT_MAX ) < epsilon; */
 /* } */
 
-#endif /* _UTILS_H_ */
+#endif                          /* _UTILS_H_ */

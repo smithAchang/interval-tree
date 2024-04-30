@@ -1,7 +1,7 @@
 /*
- * Libitree: an interval tree library in C 
+ * Libitree: an interval tree library in C
  *
- * Copyright (C) 2018 Alessandro Vullo 
+ * Copyright (C) 2018 Alessandro Vullo
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,20 +20,20 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
-*/
+ */
 
 #ifndef _INTERVAL_TREE_H_
 #define _INTERVAL_TREE_H_
 
 /*
-  Interval Tree library
-
-  This is an adaptation of the AVL balanced tree C library
-  created by Julienne Walker which can be found here:
-
-  http://www.eternallyconfuzzled.com/Libraries.aspx
-
-*/
+ * Interval Tree library
+ *
+ * This is an adaptation of the AVL balanced tree C library
+ * created by Julienne Walker which can be found here:
+ *
+ * http://www.eternallyconfuzzled.com/Libraries.aspx
+ *
+ */
 #ifdef __cplusplus
 #include <cstddef>
 
@@ -46,34 +46,34 @@ extern "C" {
 
 #include "interval.h"
 #include "interval_list.h"
-  
+
 /* Opaque types */
 typedef struct itree itree_t;
 typedef struct itreetrav itreetrav_t;
 
 /* User-defined interval data item handling */
-typedef void *(*dup_f) ( void* p );
-typedef void  (*rel_f) ( void* p );
+typedef void *(*dup_f) (void *p);
+typedef void (*rel_f) (void *p);
 
 /* Interval tree functions */
-itree_t    *itree_new ( dup_f dup, rel_f rel );
-void       itree_delete ( itree_t *tree );
-interval_t *itree_find ( const itree_t *tree, const interval_t *interval );
-ilist_t    *itree_findall ( const itree_t *tree, const interval_t *interval );
-int        itree_insert ( itree_t *tree, const interval_t *interval );
-int        itree_remove ( itree_t *tree, const interval_t *interval );
-size_t     itree_size ( const itree_t *tree );
+itree_t *itree_new(dup_f dup, rel_f rel);
+void itree_delete(itree_t *tree);
+interval_t *itree_find(const itree_t *tree, const interval_t *interval);
+ilist_t *itree_findall(const itree_t *tree, const interval_t *interval);
+int itree_insert(itree_t *tree, const interval_t *interval);
+int itree_remove(itree_t *tree, const interval_t *interval);
+size_t itree_size(const itree_t *tree);
 
 /* Tree traversal functions */
-itreetrav_t *itreetnew ( void );
-void        itreetdelete ( itreetrav_t *trav );
-interval_t  *itreetfirst ( itreetrav_t *trav, itree_t *tree );
-interval_t  *itreetlast ( itreetrav_t *trav, itree_t *tree );
-interval_t  *itreetnext ( itreetrav_t *trav );
-interval_t  *itreetprev ( itreetrav_t *trav );
+itreetrav_t *itreetnew(void);
+void itreetdelete(itreetrav_t *trav);
+interval_t *itreetfirst(itreetrav_t *trav, itree_t *tree);
+interval_t *itreetlast(itreetrav_t *trav, itree_t *tree);
+interval_t *itreetnext(itreetrav_t *trav);
+interval_t *itreetprev(itreetrav_t *trav);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _INTERVAL_TREE_H_ */
+#endif                          /* _INTERVAL_TREE_H_ */

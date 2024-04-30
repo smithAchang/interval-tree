@@ -1,7 +1,7 @@
 /*
- * Libitree: an interval tree library in C 
+ * Libitree: an interval tree library in C
  *
- * Copyright (C) 2018 Alessandro Vullo 
+ * Copyright (C) 2018 Alessandro Vullo
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
-*/
+ */
 
 #ifndef _INTERVAL_LIST_H_
 #define _INTERVAL_LIST_H_
@@ -42,21 +42,21 @@ typedef struct ilist ilist_t;
 typedef struct ilisttrav ilisttrav_t;
 
 /* Interval list functions */
-ilist_t     *ilist_new ();
-void        ilist_delete ( ilist_t* );
-size_t      ilist_size ( const ilist_t* );
-int         ilist_append ( ilist_t*, const interval_t* );
+ilist_t *ilist_new();
+void ilist_delete(ilist_t *);
+size_t ilist_size(const ilist_t *);
+int ilist_append(ilist_t *, const interval_t *);
 
 /* Interval list traversal functions */
-ilisttrav_t *ilisttrav_new ( ilist_t* );
-void        ilisttrav_delete ( ilisttrav_t *trav );
-const interval_t  *ilisttrav_first ( ilisttrav_t *trav );
-const interval_t  *ilisttrav_last ( ilisttrav_t *trav );
-const interval_t  *ilisttrav_next ( ilisttrav_t *trav );
-const interval_t  *ilisttrav_prev ( ilisttrav_t *trav );
+ilisttrav_t *ilisttrav_new(ilist_t *);
+void ilisttrav_delete(ilisttrav_t *trav);
+const interval_t *ilisttrav_first(ilisttrav_t *trav);
+const interval_t *ilisttrav_last(ilisttrav_t *trav);
+const interval_t *ilisttrav_next(ilisttrav_t *trav);
+const interval_t *ilisttrav_prev(ilisttrav_t *trav);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _INTERVAL_LIST_H_ */
+#endif                          /* _INTERVAL_LIST_H_ */
