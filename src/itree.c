@@ -141,7 +141,7 @@ struct itreetrav {
   }                                            \
 } while (0)
 
-static itreenode_t *new_node ( itree_t *tree, interval_t *i )
+static itreenode_t *new_node ( itree_t *tree, const interval_t *i )
 {
   itreenode_t *rn = (itreenode_t *)malloc ( sizeof *rn );
 
@@ -206,7 +206,7 @@ void itree_delete ( itree_t *tree )
   free ( tree );
 }
 
-interval_t *itree_find ( itree_t *tree, interval_t *interval )
+interval_t *itree_find ( const itree_t *tree, const interval_t *interval )
 {
   itreenode_t *it = tree->root;
 
@@ -218,7 +218,7 @@ interval_t *itree_find ( itree_t *tree, interval_t *interval )
 
     /* it = it->link[cmp < 0]; */
 
-    if ( interval_overlap( it->interval, interval ) )
+    if ( interval_fallin( it->interval, interval ) )
       break;
 
     it = it->link[it->link[0] == NULL || it->link[0]->max < interval->low];
@@ -227,7 +227,7 @@ interval_t *itree_find ( itree_t *tree, interval_t *interval )
   return it == NULL ? NULL : it->interval;
 }
 
-void search ( itreenode_t *node, interval_t *interval, ilist_t *results )
+static void search ( const itreenode_t *node, const interval_t *interval, ilist_t *results )
 {
 
   /*
@@ -256,7 +256,7 @@ void search ( itreenode_t *node, interval_t *interval, ilist_t *results )
   search ( node->link[1], interval, results );
 }
 
-ilist_t *itree_findall( itree_t *tree, interval_t *interval )
+ilist_t *itree_findall( const itree_t *tree, const interval_t *interval )
 {
 
   ilist_t* results = ilist_new();
@@ -272,7 +272,7 @@ ilist_t *itree_findall( itree_t *tree, interval_t *interval )
   return results;
 }
 
-int itree_insert ( itree_t *tree, interval_t *interval )
+int itree_insert ( itree_t *tree, const interval_t *interval )
 {
   /* Empty tree case */
   if ( tree->root == NULL ) {
@@ -280,7 +280,7 @@ int itree_insert ( itree_t *tree, interval_t *interval )
     if ( tree->root == NULL )
       return 0;
   }
-  else {
+ 
     itreenode_t head = {0}; /* Temporary tree root */
     itreenode_t *s, *t;     /* Place to rebalance and parent */
     itreenode_t *p, *q;     /* Iterator and save pointer to the newly inserted node */
@@ -331,14 +331,13 @@ int itree_insert ( itree_t *tree, interval_t *interval )
       tree->root = s;
     else
       t->link[q == t->link[1]] = s;
-  }
-
+  
   ++tree->size;
 
   return 1;
 }
 
-int itree_remove ( itree_t *tree, interval_t *interval )
+int itree_remove ( itree_t *tree, const interval_t *interval )
 {
   if ( tree->root != NULL ) {
     itreenode_t *it, *up[HEIGHT_LIMIT];
@@ -447,7 +446,7 @@ int itree_remove ( itree_t *tree, interval_t *interval )
   return 1;
 }
 
-size_t itree_size ( itree_t *tree )
+size_t itree_size ( const itree_t *tree )
 {
   return tree->size;
 }

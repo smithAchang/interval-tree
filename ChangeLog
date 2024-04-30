@@ -1,2 +1,7 @@
+2024-04-30  achang
+  * modify the signature of APIs using const keyword
+  * distinguish the itree_find and itree_findall using interval_fallin API
+  * use indent to format the code
+  
 2018-03-17  avullo
   * First full release, static library build with tested support for Linux/GCC/Clang

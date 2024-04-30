@@ -135,13 +135,13 @@ void ilist_delete(ilist_t *list) {
   free ( list );
 }
 
-size_t ilist_size(ilist_t *list) {
+size_t ilist_size(const ilist_t *list) {
   return list->size;
 }
 
-static ilistnode_t *insert_before(ilist_t*, ilistnode_t*, interval_t*);
+static ilistnode_t *insert_before(ilist_t*, ilistnode_t*, const interval_t*);
 
-static ilistnode_t *insert_after(ilist_t *list, ilistnode_t *pos, interval_t *i) {
+static ilistnode_t *insert_after(ilist_t *list, ilistnode_t *pos, const interval_t *i) {
   ilistnode_t *node = NULL;
 
   if ( list != NULL && pos != NULL ) {
@@ -162,7 +162,7 @@ static ilistnode_t *insert_after(ilist_t *list, ilistnode_t *pos, interval_t *i)
   return node;
 }
 
-static ilistnode_t *insert_before(ilist_t *list, ilistnode_t *pos, interval_t *i) {
+static ilistnode_t *insert_before(ilist_t *list, ilistnode_t *pos, const interval_t *i) {
 
   ilistnode_t *node = NULL;
 
@@ -191,7 +191,7 @@ static ilistnode_t *insert_before(ilist_t *list, ilistnode_t *pos, interval_t *i
   return node;
 }
 
-int ilist_append(ilist_t *list, interval_t *i) {
+int ilist_append(ilist_t *list, const interval_t *i) {
 
   ilistnode_t *node = insert_before ( list, list->tail, i);
   

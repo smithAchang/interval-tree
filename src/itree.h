@@ -58,11 +58,11 @@ typedef void  (*rel_f) ( void* p );
 /* Interval tree functions */
 itree_t    *itree_new ( dup_f dup, rel_f rel );
 void       itree_delete ( itree_t *tree );
-interval_t *itree_find ( itree_t *tree, interval_t *interval );
-ilist_t    *itree_findall ( itree_t *tree, interval_t *interval );
-int        itree_insert ( itree_t *tree, interval_t *interval );
-int        itree_remove ( itree_t *tree, interval_t *interval );
-size_t     itree_size ( itree_t *tree );
+interval_t *itree_find ( const itree_t *tree, const interval_t *interval );
+ilist_t    *itree_findall ( const itree_t *tree, const interval_t *interval );
+int        itree_insert ( itree_t *tree, const interval_t *interval );
+int        itree_remove ( itree_t *tree, const interval_t *interval );
+size_t     itree_size ( const itree_t *tree );
 
 /* Tree traversal functions */
 itreetrav_t *itreetnew ( void );

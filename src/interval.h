@@ -53,6 +53,8 @@ interval_t *interval_new ( float, float, void*, dup_f, rel_f );
 interval_t *interval_copy(const interval_t*);
 void       interval_delete ( interval_t* );
 int        interval_overlap ( const interval_t*, const interval_t* );
+int        interval_fallin ( const interval_t*, const interval_t* );
+
 /*
  * WARNING
  *

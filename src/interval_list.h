@@ -44,8 +44,8 @@ typedef struct ilisttrav ilisttrav_t;
 /* Interval list functions */
 ilist_t     *ilist_new ();
 void        ilist_delete ( ilist_t* );
-size_t      ilist_size ( ilist_t* );
-int         ilist_append ( ilist_t*, interval_t* );
+size_t      ilist_size ( const ilist_t* );
+int         ilist_append ( ilist_t*, const interval_t* );
 
 /* Interval list traversal functions */
 ilisttrav_t *ilisttrav_new ( ilist_t* );
