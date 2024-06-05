@@ -150,7 +150,10 @@ static itreenode_t *new_node(itree_t *tree, const interval_t *i)
 	rn->interval = (interval_t *)malloc(sizeof(interval_t));
 
 	if (rn->interval == NULL)
+	{
+		free(rn);
 		return NULL;
+	}
 
 	rn->interval->low = i->low;
 	rn->interval->high = i->high;
@@ -269,7 +272,14 @@ int itree_insert(itree_t *tree, const interval_t *interval)
 		tree->root = new_node(tree, interval);
 		if (tree->root == NULL)
 			return 0;
+		
+		++tree->size;
+	    return 1;
 	}
+	
+	itreenode_t* const n = new_node(tree, interval);
+    if (n == NULL)
+		return 0;
 
 	itreenode_t head = { 0 };       /* Temporary tree root */
 	itreenode_t *s, *t;             /* Place to rebalance and parent */
@@ -297,9 +307,7 @@ int itree_insert(itree_t *tree, const interval_t *interval)
 		}
 	}
 
-	p->link[dir] = q = new_node(tree, interval);
-	if (q == NULL)
-		return 0;                       /* TODO: should rollback to previous ancestors' max values */
+	p->link[dir] = q = n;
 
 	/* Update balance factors */
 	for (p = s; p != q; p = p->link[dir]) {
