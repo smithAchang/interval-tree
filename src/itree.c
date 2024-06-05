@@ -277,8 +277,8 @@ int itree_insert(itree_t *tree, const interval_t *interval)
 	    return 1;
 	}
 	
-	itreenode_t* const n = new_node(tree, interval);
-    if (n == NULL)
+	itreenode_t* const newNode = new_node(tree, interval);
+    if (newNode == NULL)
 		return 0;
 
 	itreenode_t head = { 0 };       /* Temporary tree root */
@@ -307,15 +307,15 @@ int itree_insert(itree_t *tree, const interval_t *interval)
 		}
 	}
 
-	p->link[dir] = q = n;
+	p->link[dir] = newNode;
 
 	/* Update balance factors */
-	for (p = s; p != q; p = p->link[dir]) {
+	for (p = s; p != newNode; p = p->link[dir]) {
 		dir = p->interval->low <= interval->low;         /* tree->cmp ( p->data, data ) < 0; */
 		p->balance += dir == 0 ? -1 : +1;
 	}
 
-	q = s;                          /* Save rebalance point for parent fix */
+	q = s; /* Save rebalance point for parent fix */
 
 	/* Rebalance if necessary */
 	if (abs(s->balance) > 1) {
