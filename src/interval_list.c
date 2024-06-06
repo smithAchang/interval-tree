@@ -47,23 +47,24 @@ typedef struct ilistnode {
 } ilistnode_t;
 
 struct ilist {
-	ilistnode_t *	head, *tail;         /* Dummy nodes */
+	ilistnode_t *	head, *tail;             /* Dummy nodes */
 	size_t			size;
 };
 
 struct ilisttrav {
-	ilist_t *		list;           /* Paired list */
-	ilistnode_t *	it;             /* Current node */
+	ilist_t *		list;               /* Paired list */
+	ilistnode_t *	it;                 /* Current node */
 };
 
 static ilistnode_t *ilistnode_new(const interval_t *i, ilistnode_t *next)
 {
 	ilistnode_t *node = (ilistnode_t *)malloc(sizeof *node);
 
-	if (node != NULL) {
-		node->interval = i;                 /* NOTE: doesn't own the interval, pointer aliasing */
-		node->next = next;
-	}
+	if (node == NULL)
+		return NULL;
+
+	node->interval = i;                     /* NOTE: doesn't own the interval, pointer aliasing */
+	node->next = next;
 
 	return node;
 }
@@ -74,15 +75,13 @@ static ilistnode_t *ilistnode_new(const interval_t *i, ilistnode_t *next)
  */
 ilistnode_t *ilistnode_delete(ilistnode_t *node)
 {
-	ilistnode_t *next = NULL;
+	if (node == NULL)
+		return NULL;
 
-	if (node != NULL) {
-		/* Save a reference to the next node
-		 * since we're about to destroy this one */
-		next = node->next;
-
-		free(node);
-	}
+	/* Save a reference to the next node
+	 * since we're about to destroy this one */
+	ilistnode_t *next = node->next;
+	free(node);
 
 	return next;
 }
@@ -124,7 +123,7 @@ void ilist_delete(ilist_t *list)
 	while (it != list->tail)
 		it = ilistnode_delete(it);
 
-	ilistnode_delete(it);           /* Delete tail */
+	ilistnode_delete(it);               /* Delete tail */
 
 	free(list);
 }
