@@ -91,3 +91,4 @@ src/.dirstamp
 src/*~
 tests/.dirstamp
 tests/*~
+bin/
