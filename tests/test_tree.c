@@ -102,7 +102,6 @@ static void classic_sequnece_test()
 {
 	printf("\nClassic sequncee for insertion from data struct book\n\n");
 
-	itree *t = itree_new(clone, destroy);
 	interval_t *ints[] = { make_interval(13, 13, 13),
 						   make_interval(24, 24, 24),
 						   make_interval(37, 37, 37),
@@ -121,7 +120,6 @@ static void classic_increasing_sequnece_test()
 {
 	printf("\nIncreasing sequncee for insertion from data struct book\n\n");
 
-	itree *t = itree_new(clone, destroy);
 	interval_t *ints[] = { make_interval(13, 13, 13),
 						   make_interval(24, 24, 24),
 						   make_interval(37, 37, 37),
@@ -140,7 +138,6 @@ static void classic_decreasing_sequnece_test()
 {
 	printf("\nIncreasing sequncee for insertion from data struct book\n\n");
 
-	itree *t = itree_new(clone, destroy);
 	interval_t *ints[] = { make_interval(90, 90, 90),
 						   make_interval(53, 53, 53),
 						   make_interval(37, 37, 37),
