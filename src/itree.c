@@ -254,14 +254,11 @@ ilist_t *itree_findall(const itree_t *tree, const interval_t *interval)
 {
 	ilist_t *results = ilist_new();
 
-	if (results != NULL) {
-		/* empty tree case */
-		if (tree->root == NULL)
-			return results;
-
-		search(tree->root, interval, results);
+	if (results == NULL || tree->root == NULL/* empty tree case */) {
+		return results;	
 	}
 
+	search(tree->root, interval, results);
 	return results;
 }
 
@@ -291,12 +288,12 @@ int itree_insert(itree_t *tree, const interval_t *interval)
 	t->link[1] = tree->root;
 
 	/* Search down the tree, saving rebalance points */
-	for (s = p = t->link[1];; p = q) {
+	for (s = p = t->link[1]; ; p = q) {
+		p->max = p->max < interval->high ? interval->high : p->max;         /* Update ancestor's max if needed */
+
 		/* Duplicates admitted, placed in the right subtree */
 		dir = p->interval->low <= interval->low;         /* tree->cmp ( p->data, data ) < 0; */
 		q = p->link[dir];
-
-		p->max = p->max < interval->high ? interval->high : p->max;         /* Update ancestor's max if needed */
 
 		if (q == NULL)
 			break;
