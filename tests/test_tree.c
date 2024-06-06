@@ -1,9 +1,15 @@
-#include "itree.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
+
+#include "itree.h"
+
+
+#define NELEMENTS(arr) (sizeof(arr) / sizeof(arr[0]))
 
 typedef itree_t itree;
 typedef itreetrav_t itreetrav;
+
 
 /* clone an integer */
 void *clone(void *p)
@@ -47,6 +53,110 @@ void destroy_interval(interval_t *i)
 	free(i);
 }
 
+static void insertion_sequnece_test(interval_t *ints[], const size_t counts, const char *szCase)
+{
+	printf("\nSpecial sequncee for insertion of %s case \n\n", szCase);
+
+	itree *t = itree_new(clone, destroy);
+
+	for (size_t i = 0; i < counts; ++i) {
+		int rc = itree_insert(t, ints[i]);
+		assert(rc > 0);
+
+		printf("Inserting [%.1f, %.1f] at sequnece[%zu]\n",
+			   ints[i]->low, ints[i]->high, i);
+
+		interval_t *find = itree_find(t, ints[i]);
+		assert(find != NULL);
+		assert(find->low == ints[i]->low);
+		assert(find->high == ints[i]->high);
+	}
+
+	for (size_t i = 0; i < counts; ++i) {
+		int rc = itree_remove(t, ints[i]);
+		assert(rc > 0);
+
+		printf("Query deleted interval after removal of [%.1f, %.1f] at sequnece[%zu]\n",
+			   ints[i]->low, ints[i]->high, i);
+
+		interval_t *find = itree_find(t, ints[i]);
+		assert(find == NULL);
+
+		for (size_t j = i + 1; j < counts; ++j) {
+			printf("Query lefted interval [%.1f, %.1f] after removal of [%.1f, %.1f] at sequnece[%zu]\n",
+				   ints[j]->low, ints[j]->high,
+				   ints[i]->low, ints[i]->high, i);
+
+			find = itree_find(t, ints[j]);
+			assert(find != NULL);
+			assert(find->low == ints[j]->low);
+			assert(find->high == ints[j]->high);
+		}
+	}
+
+	itree_delete(t);
+}
+
+
+static void classic_sequnece_test()
+{
+	printf("\nClassic sequncee for insertion from data struct book\n\n");
+
+	itree *t = itree_new(clone, destroy);
+	interval_t *ints[] = { make_interval(13, 13, 13),
+						   make_interval(24, 24, 24),
+						   make_interval(37, 37, 37),
+						   make_interval(90, 90, 90),
+						   make_interval(53, 53, 53) };
+
+
+	insertion_sequnece_test(ints, NELEMENTS(ints), __func__);
+
+
+	for (size_t i = 0; i < NELEMENTS(ints); ++i)
+		destroy_interval(ints[i]);
+}
+
+static void classic_increasing_sequnece_test()
+{
+	printf("\nIncreasing sequncee for insertion from data struct book\n\n");
+
+	itree *t = itree_new(clone, destroy);
+	interval_t *ints[] = { make_interval(13, 13, 13),
+						   make_interval(24, 24, 24),
+						   make_interval(37, 37, 37),
+						   make_interval(53, 53, 53),
+						   make_interval(90, 90, 90) };
+
+
+	insertion_sequnece_test(ints, NELEMENTS(ints), __func__);
+
+
+	for (size_t i = 0; i < NELEMENTS(ints); ++i)
+		destroy_interval(ints[i]);
+}
+
+static void classic_decreasing_sequnece_test()
+{
+	printf("\nIncreasing sequncee for insertion from data struct book\n\n");
+
+	itree *t = itree_new(clone, destroy);
+	interval_t *ints[] = { make_interval(90, 90, 90),
+						   make_interval(53, 53, 53),
+						   make_interval(37, 37, 37),
+						   make_interval(24, 24, 24),
+						   make_interval(13, 13, 13) };
+
+
+	insertion_sequnece_test(ints, NELEMENTS(ints), __func__);
+
+
+	for (size_t i = 0; i < NELEMENTS(ints); ++i)
+		destroy_interval(ints[i]);
+}
+
+
+
 int main()
 {
 	itree *t = itree_new(clone, destroy);
@@ -57,9 +167,9 @@ int main()
 						   make_interval(12, 15, 50),
 						   make_interval(30, 40, 25) };
 
-	int i;
+	size_t i;
 
-	for (i = 0; i < 6; ++i)
+	for (i = 0; i < NELEMENTS(ints); ++i)
 		printf("Inserting [%.1f, %.1f] (%d) - %s\n",
 			   ints[i]->low, ints[i]->high, *(int *)ints[i]->data, itree_insert(t, ints[i]) ? "OK" : "KO");
 
@@ -119,8 +229,13 @@ int main()
 	itreetrav_delete(trav);
 	itree_delete(t);
 
-	for (i = 0; i < 6; ++i)
+	for (i = 0; i < NELEMENTS(ints); ++i)
 		destroy_interval(ints[i]);
 
 	destroy_interval(query);
+
+	printf("\nTest using classic sequnece for insertion\n\n");
+	classic_sequnece_test();
+	classic_increasing_sequnece_test();
+	classic_decreasing_sequnece_test();
 }

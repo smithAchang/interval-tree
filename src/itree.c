@@ -208,7 +208,7 @@ void itree_delete(itree_t *tree)
 	free(tree);
 }
 
-interval_t *itree_find(const itree_t *tree, const interval_t *interval)
+interval_t *itree_find(itree_t *tree, const interval_t *interval)
 {
 	itreenode_t *it = tree->root;
 
