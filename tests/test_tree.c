@@ -65,9 +65,9 @@ int main()
 
 	printf("\nTree size: %zu\n\n", itree_size(t));
 
-	itreetrav *trav = itreetnew();
+	itreetrav *trav = itreetrav_new();
 	interval_t *item;
-	for (item = itreetfirst(trav, t); item != NULL; item = itreetnext(trav))
+	for (item = itreetrav_first(trav, t); item != NULL; item = itreetrav_next(trav))
 		//print_interval(item);
 		printf("\n");
 
@@ -109,14 +109,14 @@ int main()
 	/* result = (int*)itree_find(t, &query); */
 	/* printf("Query: %d -- Found: %d\n", query, result == NULL?0:1); */
 
-	for (item = itreetfirst(trav, t); item != NULL; item = itreetnext(trav))
+	for (item = itreetrav_first(trav, t); item != NULL; item = itreetrav_next(trav))
 		//print_interval(item);
 		printf("\n");
 
 	/* printf("First: %d\n", *(int*)jsw_avltfirst(trav, t)); */
 	/* printf("Last: %d\n", *(int*)jsw_avltlast(trav, t)); */
 
-	itreetdelete(trav);
+	itreetrav_delete(trav);
 	itree_delete(t);
 
 	for (i = 0; i < 6; ++i)

@@ -65,12 +65,12 @@ int itree_remove(itree_t *tree, const interval_t *interval);
 size_t itree_size(const itree_t *tree);
 
 /* Tree traversal functions */
-itreetrav_t *itreetnew(void);
-void itreetdelete(itreetrav_t *trav);
-interval_t *itreetfirst(itreetrav_t *trav, itree_t *tree);
-interval_t *itreetlast(itreetrav_t *trav, itree_t *tree);
-interval_t *itreetnext(itreetrav_t *trav);
-interval_t *itreetprev(itreetrav_t *trav);
+itreetrav_t *itreetrav_new(void);
+void itreetrav_delete(itreetrav_t *trav);
+interval_t *itreetrav_first(itreetrav_t *trav, itree_t *tree);
+interval_t *itreetrav_last(itreetrav_t *trav, itree_t *tree);
+interval_t *itreetrav_next(itreetrav_t *trav);
+interval_t *itreetrav_prev(itreetrav_t *trav);
 
 #ifdef __cplusplus
 }

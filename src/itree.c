@@ -450,12 +450,12 @@ size_t itree_size(const itree_t *tree)
 	return tree->size;
 }
 
-itreetrav_t *itreetnew(void)
+itreetrav_t *itreetrav_new(void)
 {
 	return (itreetrav_t *)malloc(sizeof(itreetrav_t));
 }
 
-void itreetdelete(itreetrav_t *trav)
+void itreetrav_delete(itreetrav_t *trav)
 {
 	free(trav);
 }
@@ -526,22 +526,22 @@ static interval_t *move(itreetrav_t *trav, int dir)
 	return trav->it == NULL ? NULL : trav->it->interval;
 }
 
-interval_t *itreetfirst(itreetrav_t *trav, itree_t *tree)
+interval_t *itreetrav_first(itreetrav_t *trav, itree_t *tree)
 {
 	return start(trav, tree, 0);     /* Min value */
 }
 
-interval_t *itreetlast(itreetrav_t *trav, itree_t *tree)
+interval_t *itreetrav_last(itreetrav_t *trav, itree_t *tree)
 {
 	return start(trav, tree, 1);     /* Max value */
 }
 
-interval_t *itreetnext(itreetrav_t *trav)
+interval_t *itreetrav_next(itreetrav_t *trav)
 {
 	return move(trav, 1);           /* Toward larger items */
 }
 
-interval_t *itreetprev(itreetrav_t *trav)
+interval_t *itreetrav_prev(itreetrav_t *trav)
 {
 	return move(trav, 0);           /* Toward smaller items */
 }
