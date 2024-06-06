@@ -98,7 +98,7 @@ int main()
 		printf("Overlap: [%.1f, %.1f]\n\n", result->low, result->high);
 
 	printf("Deleting interval [30, 40] - ");
-	itree_erase(t, ints[5]) ? printf("OK\n") : printf("KO\n");
+	itree_remove(t, ints[5]) ? printf("OK\n") : printf("KO\n");
 
 	/* printf("Tree size: %zu\n", itree_size(t)); */
 
