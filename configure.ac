@@ -1,50 +1,33 @@
+#!/usr/bin/m4 -P
 AC_PREREQ([2.69])
 AC_INIT([libitree], [0.0.1], [killm9m1@yahoo.it])
-
-# Put autotools auxiliary files in a subdir, so they don't clutter top dir.
-# I am not actually doing this at the moment because there should be relatively
-# little in the top directory anyway.
-#AC_CONFIG_AUX_DIR([build-aux])
-#AC_CONFIG_MACRO_DIR([m4])
+AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
 # Safety check - list a source file that wouldn't be in other directories.
 AC_CONFIG_SRCDIR([src/interval.c])
-AC_CONFIG_HEADERS([config.h])
 
-# Enable "automake" to simplify creating makefiles. foreign relaxes some GNU
-# checks. -Wall and -Werror are instructions to Automake, not gcc.
-# Because this is a non-recursive automake, we use subdir-objects to tell
-# automake to create objects such as .o in sub-directories rather than placing
-# all artifacts in the top level directory.
-AM_INIT_AUTOMAKE([subdir-objects foreign -Wall -Werror])
-PKG_PROG_PKG_CONFIG
-AM_PROG_AR
 
 # Remember externally set CFLAGS
 # EXTERNAL_CFLAGS="$CFLAGS"
 
 # Checks for programs. These may set default variables, such as CFLAGS
-AC_PROG_CPP
+AM_PROG_AR
 AC_PROG_CC
-AC_PROG_CC_C99 # or AC_PROG_CC_89 to force C89 mode or AC_PROG_CC_STDC to go to latest supported standard (currently C99)
-AC_PROG_INSTALL
-AC_PROG_RANLIB # We're building a static library at the moment
 
-# Reset the externally set CFLAGS after calling AC_PROG*
-# CFLAGS="$EXTERNAL_CFLAGS"
 
 # Use the C language and compiler for the following checks
 AC_LANG([C])
 
-# Checks for libraries.
-# PKG_CHECK_MODULES([GLIB], [glib-2.0], [have_libglib=yes], [have_libglib=no])
-# AM_CONDITIONAL([GLIB],  [test "$have_libglib" = "yes"])
-# PKG_CHECK_MODULES([SQLITE3], [sqlite3], [have_libsqlite3=yes], [have_libsqlite3=no])
-# AM_CONDITIONAL([LIB_SQLITE3],  [test "$have_libsqlite3" = "yes"])
-PKG_CHECK_MODULES([CHECK], [check])
+
+# Checks C11
+AC_COMPILE_IFELSE(
+					[AC_LANG_PROGRAM([[#include <stdio.h>]], [for(int i=0;i<10;++i) printf("Test C11\n");]])],
+					[AC_MSG_RESULT([c11 supportted])],
+					[AC_MSG_RESULT([c11 not supportted])])
 
 # Checks for header files.
 AC_HEADER_STDC
+AC_CHECK_HEADERS([assert.h])
 AC_CHECK_HEADERS([stddef.h])
 AC_CHECK_HEADERS([stdio.h])
 AC_CHECK_HEADERS([math.h])
